@@ -31,8 +31,9 @@ resource "google_service_account" "kubernetes" {
 # }
 
 resource "google_container_node_pool" "spot" {
-  name    = "spot"
-  cluster = google_container_cluster.primary.id
+  name              = "spot"
+  cluster           = google_container_cluster.primary.id
+  max_pods_per_node = 250
 
   management {
     auto_repair  = true
@@ -48,10 +49,11 @@ resource "google_container_node_pool" "spot" {
     # preemptible  = true
     machine_type = "n2-standard-4"
     spot         = true
-    image_type   = "COS"
+    # image_type   = "COS"
+    image_type = "COS_CONTAINERD"
 
     labels = {
-      type = "spot nodepool"
+      type = "spot_nodepool"
     }
 
     workload_metadata_config {

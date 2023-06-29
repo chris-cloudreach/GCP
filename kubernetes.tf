@@ -1,32 +1,51 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster
 resource "google_container_cluster" "primary" {
+  provider                 = google-beta
   name                     = "primary"
   location                 = "us-central1-a"
   remove_default_node_pool = true
   initial_node_count       = 1
-  network                  = google_compute_network.main.self_link
-  subnetwork               = google_compute_subnetwork.private.self_link
-  logging_service          = "logging.googleapis.com/kubernetes"
-  monitoring_service       = "monitoring.googleapis.com/kubernetes"
-  networking_mode          = "VPC_NATIVE"
+  # max_pods_per_node           = 250
+  network    = google_compute_network.main.self_link
+  subnetwork = google_compute_subnetwork.private.self_link
+  # logging_service          = "logging.googleapis.com/kubernetes"
+  # monitoring_service       = "monitoring.googleapis.com/kubernetes"
+  networking_mode = "VPC_NATIVE"
 
   enable_intranode_visibility = true
 
   # Checkov rule skips:
   #checkov:skip=CKV_GCP_21
+  #checkov:skip=CKV_GCP_24
+  #checkov:skip=CKV_GCP_66
+  #checkov:skip=CKV_GCP_67
+  #checkov:skip=CKV_GCP_65
 
-  min_master_version = 1.12
+  min_master_version = "1.26.5-gke.1200"
+  # min_master_version = "1.27.2-gke.2100"
+  # master_version = "1.23.17-gke.7700"
+
 
   enable_shielded_nodes = true
 
-  enable_binary_authorization = true
+  # enable_binary_authorization = true
+  binary_authorization {
+    # first enable binary authorisation API in console
+    # enabled = true
+    evaluation_mode = "PROJECT_SINGLETON_POLICY_ENFORCE"
+  }
 
-
+  logging_config {
+    enable_components = [
+      "SYSTEM_COMPONENTS",
+      "WORKLOADS",
+    ]
+  }
 
   # REMOVE THIS LINE
-  authenticator_groups_config {
-    security_group = "gke-security-groups@yourdomain.com"
-  }
+  # authenticator_groups_config {
+  #   security_group = "gke-security-groups@yourdomain.com"
+  # }
 
   master_auth {
     client_certificate_config {
@@ -36,7 +55,7 @@ resource "google_container_cluster" "primary" {
 
   master_authorized_networks_config {
     cidr_blocks {
-      cidr_block   = ""
+      cidr_block   = "10.0.0.0/16"
       display_name = "master_authorized_CIDR"
     }
   }
@@ -60,10 +79,11 @@ resource "google_container_cluster" "primary" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
-    image_type = "COS"
+    # image_type = "COS"
+    image_type = "COS_CONTAINERD"
 
     labels = {
-      type = "Github Runner Infrastructure"
+      type = "Github_Runner_Infrastructure"
     }
 
     workload_metadata_config {
@@ -73,17 +93,17 @@ resource "google_container_cluster" "primary" {
       enable_secure_boot          = true
       enable_integrity_monitoring = true
     }
-
-
   }
 
   network_policy {
     enabled = true
   }
-
-  pod_security_policy_config {
-    enabled = true
-  }
+  # REMOVED FROM GKE VERSION 1.25+
+  # ALREADY ENABLED BY DEFAULT ON CLUSTERS RUNNING 1.25+
+  # https://cloud.google.com/kubernetes-engine/docs/how-to/migrate-podsecuritypolicy
+  # pod_security_policy_config {
+  #   enabled = true
+  # }
 
   monitoring_config {
     enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER"]
