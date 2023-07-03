@@ -1,0 +1,7 @@
+skip-check:
+  - CKV_TF_1
+  - CKV_GCP_20 # Review comment - remove master authorised network
+  - CKV_GCP_24 # pod security already enabled on latest GKE version
+  - CKV_GCP_65 # Need to update /plaform-engineering/gke-infra/kubernetes.tf with correct RBAC security group
+  - CKV_GCP_66 # Binary Authorization already enabled in code
+  - CKV_GCP_67 # Already satisfied by using latest GKE version

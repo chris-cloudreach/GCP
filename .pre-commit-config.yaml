@@ -42,5 +42,7 @@ repos:
           - --hook-config=--sort-by-required
           - --hook-config=--with-aggregate-type-defaults
           - --hook-config=--create-file-if-not-exist=true
-      - id: terraform_tflint
       - id: terraform_checkov
+        args:
+          - --args=--config-file __GIT_WORKING_DIR__/.checkov.yml
+      - id: terraform_tflint
