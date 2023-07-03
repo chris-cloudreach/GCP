@@ -11,7 +11,7 @@ locals {
   pods-per-node         = 110
 
   GKE_vpc_name = "gke-vpc"
-  subnet_name  = "gke-subnet"
-  route        = "gke-route"
+  subnet_name  = "gke-subnet2"
+  route        = "gke-route2"
 
 }
