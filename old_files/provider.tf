@@ -11,6 +11,7 @@ provider "google-beta" {
 
 terraform {
   required_version = "1.3.6"
+
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -21,5 +22,11 @@ terraform {
       source  = "hashicorp/google-beta"
       version = "4.71.0"
     }
+
+
+  }
+  backend "gcs" {
+    bucket = "tf-state-28062023"
+    prefix = "terraform/state"
   }
 }
