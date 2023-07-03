@@ -3,6 +3,7 @@
     # Currently this workflow has a behaviour to not run terraform apply if the
     # plan shows any resources being destroyed or updated as a safety feature but
     # this should be reworked as we'll likely need to do this in the future
+    # kjvjhhkmnbygjhbn hj ngh ughfghjjnjn JGHJKJLHFVUYBJYBUJHUY
 
 name: YES Deploy GKE
 on:
@@ -39,18 +40,6 @@ jobs:
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
-
-      - name: Generate token
-        id: generate_token
-        uses: department-for-transport-IaC/thunderdome//actions/github-generate-app-token@main
-        with:
-          app_id: "GH_APP_TERRAFORM_STACK_BUILD_BOT_APP_ID"
-          private_key: "GH_APP_TERRAFORM_STACK_BUILD_BOT_PRIVATE_KEY"
-
-      - name: Setup SSH config
-        uses: department-for-transport-IaC/thunderdome//actions/ssh-oauth-config@main
-        with:
-          token: ${{ steps.generate_token.outputs.token }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -102,23 +91,6 @@ jobs:
             echo "Terraform plan shows no resources being created, updated or deleted"
           fi
 
-      - name: Add sticky PR comment
-        id: pr_comment_sticky
-        uses: mshick/add-pr-comment@v2
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: ${{ steps.plan_output.outputs.stdout }}
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-        with:
-          message: |
-            #### Terraform Automated Plan 📖 ${{ steps.plan_output.outcome }}
-            <details><summary>Show Plan (Current Status of Pull Request)</summary>
-
-            ```terraform
-            ${{ env.PLAN }}
-            ```
-
-            </details>
 
       - name: Terraform plan status
         if: steps.plan.outcome == 'failure'
@@ -134,30 +106,3 @@ jobs:
         run: terraform -chdir=./PEH/gke-infra apply -auto-approve -input=false tfplan.json -no-color
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-
-      - name: Add/update comment to the PR with the Apply output
-        id: pr_comment_apply
-        if: github.event_name == 'pull_request_review' && steps.apply.outcome == 'success'
-        uses: mshick/add-pr-comment@v2
-        env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-          PLAN: ${{ steps.plan_output.outputs.stdout }}
-          APPLY: ${{ steps.apply.outputs.stdout }}
-        with:
-          allow-repeats: true
-          message: |
-            #### Terraform Automated Apply 📖 ${{ steps.apply.outcome }}
-            <details><summary>Show Original Plan</summary>
-
-            ```terraform
-            ${{ env.PLAN }}
-            ```
-
-            </details>
-            <details><summary>Show Apply Output</summary>
-
-            ```terraform
-            ${{ env.APPLY }}
-            ```
-
-            </details>

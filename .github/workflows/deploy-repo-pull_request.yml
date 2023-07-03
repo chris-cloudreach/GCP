@@ -3,6 +3,7 @@
     # Currently this workflow has a behaviour to not run terraform apply if the
     # plan shows any resources being destroyed or updated as a safety feature but
     # this should be reworked as we'll likely need to do this in the future
+    # kjvjhhkmnbygjhbn hj ngh
 
 name: No Deploy
 on:
@@ -89,23 +90,6 @@ jobs:
             echo "Terraform plan shows no resources being created, updated or deleted"
           fi
 
-      - name: Add sticky PR comment
-        id: pr_comment_sticky
-        uses: mshick/add-pr-comment@v2
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: ${{ steps.plan_output.outputs.stdout }}
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-        with:
-          message: |
-            #### Terraform Automated Plan 📖 ${{ steps.plan_output.outcome }}
-            <details><summary>Show Plan (Current Status of Pull Request)</summary>
-
-            ```terraform
-            ${{ env.PLAN }}
-            ```
-
-            </details>
 
       - name: Terraform plan status
         if: steps.plan.outcome == 'failure'
