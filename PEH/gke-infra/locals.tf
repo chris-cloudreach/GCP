@@ -1,6 +1,6 @@
 locals {
   project_id = data.google_project.project.project_id
-  region     = "europe-west2"
+  region     = "europe-west1"
 
   gke_cluster_name      = "platform-engineering-gha"
   gke-master-ipv4-range = "172.16.0.0/28"
