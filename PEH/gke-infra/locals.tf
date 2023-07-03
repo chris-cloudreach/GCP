@@ -8,7 +8,7 @@ locals {
   pods-ip-range         = "10.196.0.0/14"
   service-ip-range      = "10.200.240.0/20"
   image_type            = "COS_CONTAINERD"
-  pods-per-node         = 110
+  pods-per-node         = 150
 
   GKE_vpc_name = "gke-vpc"
   subnet_name  = "gke-subnet-tgha2"
