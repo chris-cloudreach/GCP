@@ -43,4 +43,4 @@ repos:
           - --hook-config=--with-aggregate-type-defaults
           - --hook-config=--create-file-if-not-exist=true
       - id: terraform_tflint
-      # - id: terraform_checkov
+      - id: terraform_checkov
