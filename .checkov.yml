@@ -1,5 +1,5 @@
 skip-check:
-  - CKV_TF_1
+  - CKV_TF_1 # changing outside PEH
   - CKV_GCP_20 # Review comment - remove master authorised network
   - CKV_GCP_24 # pod security already enabled on latest GKE version
   - CKV_GCP_65 # Need to update /plaform-engineering/gke-infra/kubernetes.tf with correct RBAC security group
