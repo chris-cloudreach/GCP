@@ -2,7 +2,7 @@ locals {
   project_id = data.google_project.project.project_id
   region     = "europe-west2"
 
-  gke_cluster_name      = "platform-engineering"
+  gke_cluster_name      = "platform-engineering-gha"
   gke-master-ipv4-range = "172.16.0.0/28"
   Spot_nodepool_name    = "platform-engineering-spot-nodepool"
   pods-ip-range         = "10.196.0.0/14"
